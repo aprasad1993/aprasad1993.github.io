@@ -8,6 +8,54 @@
 <!--<script src="https://www.googledrive.com/host/0BwwZEXS3GesiTjlHSmlOcEJaeDA/vcf/vcf.js"></script>-->
 <script src="localforage.js"></script>
 <script src="openHealth.js"></script>
+<script type="text/javascript">
+	// Create the XHR object.
+	function createCORSRequest(method, url) {
+	  var xhr = new XMLHttpRequest();
+	  if ("withCredentials" in xhr) {
+	    // XHR for Chrome/Firefox/Opera/Safari.
+	    xhr.open(method, url, true);
+	  } else if (typeof XDomainRequest != "undefined") {
+	    // XDomainRequest for IE.
+	    xhr = new XDomainRequest();
+	    xhr.open(method, url);
+	  } else {
+	    // CORS not supported.
+	    xhr = null;
+	  }
+	  return xhr;
+	}
+
+	// Helper method to parse the title tag from the response.
+	function getTitle(text) {
+	  return text.match('<title>(.*)?</title>')[1];
+	}
+
+	// Make the actual CORS request.
+	function makeCorsRequest() {
+	  var url = 'https://data.gov.in/node/95302/datastore/export/jsonp?callback=lala';
+
+	  var xhr = createCORSRequest('GET', url);
+	  if (!xhr) {
+	    console.log('CORS not supported');
+	    return;
+	  }
+
+	  // Response handlers.
+	  xhr.onload = function() {
+	    var text = xhr.responseText;
+	    var title = getTitle(text);
+	    console.log('Response from CORS request to ' + url + ': ' + title);
+	  };
+
+	  xhr.onerror = function() {
+	    console.log('Woops, there was an error making the request.');
+	  };
+
+	  xhr.send();
+	}
+	makeCorsRequest(); 
+</script>
 <body>
 
 	<div class="container" id="openHealth">
@@ -15,13 +63,6 @@
 		<div id="msg">There is nothing to see <a href="https://mathbiol.github.io/openHealth" target=_blank>here</a>, the action is in the <a href="https://developer.chrome.com/devtools/docs/console" target=_blank>browser's console</a>. Versioned source code + docs at <a href="https://github.com/mathbiol/openHealth" target=_blank>gitHub</a>.</div>
 		<hr> 
 	</div>
-	
-	<script>
-		var dsirpMed;
-		openHealth.buildUI('openHealth');
-		openHealth.soda("DSRIP Medicaid Hospital Inpatient Potentially Preventable Readmission (PPR) Rates by Hospital: Beginning 2011", function(x){dsirpMed=x;console.log(dsirpMed)});
-	</script>
-
 </body>
 </html>
 
